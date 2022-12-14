@@ -62,7 +62,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/test2").hasAuthority("ACCESS_TEST2")
                 .antMatchers("/test1or2").hasAnyAuthority("ACCESS_TEST1", "ACCESS_TEST2")
                 .and()
-                .httpBasic();
+                .formLogin()
+                .loginPage("/path/to/login/page").permitAll();
 
     }
 

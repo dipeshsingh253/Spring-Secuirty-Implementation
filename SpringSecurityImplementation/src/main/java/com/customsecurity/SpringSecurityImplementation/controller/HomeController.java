@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
 
-//    @Autowired
-//    private UserRepository userRepository;
-
     @GetMapping("/")
     public String helloGeneral() {
         return "Hello World...To Everyone!";
@@ -59,10 +56,6 @@ public class HomeController {
         return "It means you have authority 1 or 2...!";
     }
 
-//    @GetMapping("/allusers")
-//    public String allUsers() {
-//        return userRepository.findAll().toString();
-//    }
 
 
 }
