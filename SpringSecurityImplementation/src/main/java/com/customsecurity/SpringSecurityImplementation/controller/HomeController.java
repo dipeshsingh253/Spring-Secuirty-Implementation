@@ -25,4 +25,15 @@ public class HomeController {
     public String admin() {
         return "Hello World Admin...!";
     }
+
+    @GetMapping("/manager")
+    public String manager() {
+        return "Hello World Manager...!";
+    }
+
+
+    @GetMapping("/managerandadmin")
+    public String managerAndAdmin() {
+        return "Hello World Manager or Admin...!";
+    }
 }
