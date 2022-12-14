@@ -1,11 +1,15 @@
 package com.customsecurity.SpringSecurityImplementation.configuration;
 
+import com.customsecurity.SpringSecurityImplementation.service.CustomeUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -13,21 +17,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("admin")
-                .password(passwordEncoder().encode("admin123"))
-                .roles("ADMIN").authorities("ACCESS_TEST1")
-                .and()
-                .withUser("manager")
-                .password(passwordEncoder().encode("manager123"))
-                .roles("MANAGER").authorities("ACCESS_TEST1", "ACCESS_TEST2")
-                .and()
-                .withUser("dipesh")
-                .password(passwordEncoder().encode("deep123"))
-                .roles("USER");
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(authenticationProvider());
 
     }
 
@@ -62,12 +57,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user").hasRole("USER")
                 .antMatchers("/manager").hasRole("MANAGER")
                 .antMatchers("/managerandadmin").hasAnyRole("MANAGER", "ADMIN")
+                .antMatchers("/allusers").hasAnyRole("MANAGER", "ADMIN")
                 .antMatchers("/test1").hasAuthority("ACCESS_TEST1")
                 .antMatchers("/test2").hasAuthority("ACCESS_TEST2")
                 .antMatchers("/test1or2").hasAnyAuthority("ACCESS_TEST1", "ACCESS_TEST2")
                 .and()
                 .httpBasic();
 
+    }
+
+
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+
+        return daoAuthenticationProvider;
     }
 
 
