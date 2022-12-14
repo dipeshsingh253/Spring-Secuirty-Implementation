@@ -36,4 +36,20 @@ public class HomeController {
     public String managerAndAdmin() {
         return "Hello World Manager or Admin...!";
     }
+
+    @GetMapping("/test1")
+    public String authTestOne() {
+        return "It means you have authority 1...!";
+    }
+
+    @GetMapping("/test2")
+    public String authTestTwo() {
+        return "It means you have authority 2...!";
+    }
+
+    @GetMapping("/test1or2")
+    public String authTestOneOrTwo() {
+        return "It means you have authority 1 or 2...!";
+    }
+
 }
