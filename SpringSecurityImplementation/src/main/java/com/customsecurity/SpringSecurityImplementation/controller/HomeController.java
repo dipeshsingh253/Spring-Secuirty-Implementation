@@ -1,11 +1,12 @@
 package com.customsecurity.SpringSecurityImplementation.controller;
 
+import com.customsecurity.SpringSecurityImplementation.dto.LoginDto;
 import com.customsecurity.SpringSecurityImplementation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 public class HomeController {
 
 
@@ -57,5 +58,9 @@ public class HomeController {
     }
 
 
-
+//    @PostMapping("/login")
+//    public String login(@RequestBody LoginDto loginDto) {
+//
+//        return "Success";
+//    }
 }

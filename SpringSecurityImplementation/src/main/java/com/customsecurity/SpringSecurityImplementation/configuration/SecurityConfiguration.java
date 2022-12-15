@@ -1,14 +1,18 @@
 package com.customsecurity.SpringSecurityImplementation.configuration;
 
-import com.customsecurity.SpringSecurityImplementation.service.CustomeUserDetailsService;
+import com.customsecurity.SpringSecurityImplementation.jwt.JwtAuthenticationFilter;
+import com.customsecurity.SpringSecurityImplementation.jwt.JwtAuthorizationFilter;
+import com.customsecurity.SpringSecurityImplementation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +23,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -50,20 +57,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
          */
 
         http
-                .authorizeHttpRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/hello").authenticated()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasRole("USER")
-                .antMatchers("/manager").hasRole("MANAGER")
-                .antMatchers("/managerandadmin").hasAnyRole("MANAGER", "ADMIN")
-                .antMatchers("/allusers").hasAnyRole("MANAGER", "ADMIN")
-                .antMatchers("/test1").hasAuthority("ACCESS_TEST1")
-                .antMatchers("/test2").hasAuthority("ACCESS_TEST2")
-                .antMatchers("/test1or2").hasAnyAuthority("ACCESS_TEST1", "ACCESS_TEST2")
+                // remove csrf and state in session because in jwt we do not need them
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .formLogin()
-                .loginPage("/path/to/login/page").permitAll();
+                // add jwt filters (1. authentication, 2. authorization)
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository))
+                .authorizeRequests()
+                // configure access rules
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers("/manager").hasRole("MANAGER")
+                .antMatchers("/admin").hasRole("ADMIN")
+                .anyRequest().authenticated();
 
     }
 
