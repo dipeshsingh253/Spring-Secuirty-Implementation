@@ -59,17 +59,15 @@ public class AuthenticationController {
 
     @GetMapping("/auth/userinfo")
     public ResponseEntity<?> getUserInfo(Principal user) {
-        CustomUserDetails userObj = (CustomUserDetails) userDetailsService.loadUserByUsername(user.getName());
 
+        CustomUserDetails userObj = (CustomUserDetails) userDetailsService.loadUserByUsername(user.getName());
 
         UserInfo userInfo = new UserInfo();
         userInfo.setFirstName("Dipesh");
         userInfo.setLastName("Singh");
         userInfo.setRoles(userObj.getAuthorities().toArray());
 
-
         return ResponseEntity.ok(userInfo);
-
 
     }
 }
