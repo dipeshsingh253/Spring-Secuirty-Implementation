@@ -36,15 +36,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint).and()
-                .authorizeRequests((request) -> request.antMatchers("/h2-console/**", "/api/v1/auth/login","/api/register").permitAll()
-                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
+                .authorizeRequests(
+                        (request) -> request.antMatchers("/api/", "/api/v1/auth/login", "/api/register").permitAll()
+                                .antMatchers("/api/user").hasRole("USER")
+                                .antMatchers("/api/user").hasAuthority("ACCESS1")
+                                .antMatchers("/api/admin").hasRole("ADMIN")
+                                .anyRequest().authenticated()
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(userDetailsService, jwtTokenHelper),
                         UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable().cors().and().headers().frameOptions().disable();
-
 
 
     }
