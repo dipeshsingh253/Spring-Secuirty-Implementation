@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint).and()
                 .authorizeRequests(
-                        (request) -> request.antMatchers("/api/", "/api/v1/auth/login", "/api/register").permitAll()
+                        (request) -> request.antMatchers("/api/", "/api/v1/auth/login","/api/v1/auth/forgot_password", "/api/register","/api/v1/auth/reset_password/**").permitAll()
                                 .antMatchers("/api/user").hasRole("USER")
                                 .antMatchers("/api/user").hasAuthority("ACCESS1")
                                 .antMatchers("/api/admin").hasRole("ADMIN")
