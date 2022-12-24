@@ -6,10 +6,12 @@ import java.security.spec.InvalidKeySpecException;
 
 import com.customsecurity.SpringSecurityImplementation.config.jwt.JwtTokenHelper;
 import com.customsecurity.SpringSecurityImplementation.dto.AuthenticationRequest;
+import com.customsecurity.SpringSecurityImplementation.dto.ForgetPasswordRequest;
 import com.customsecurity.SpringSecurityImplementation.dto.LoginResponse;
 import com.customsecurity.SpringSecurityImplementation.dto.UserInfo;
 import com.customsecurity.SpringSecurityImplementation.service.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,9 +55,18 @@ public class AuthenticationController {
         LoginResponse response = new LoginResponse();
         response.setToken(jwtToken);
 
-
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/auth/forgot_password")
+    private ResponseEntity<String> forgetPassword(ForgetPasswordRequest forgetPasswordRequest) {
+
+        System.out.println(forgetPasswordRequest.getEmail());
+
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+
+    }
+
 
     @GetMapping("/auth/userinfo")
     public ResponseEntity<?> getUserInfo(Principal user) {
@@ -69,7 +80,6 @@ public class AuthenticationController {
 
 
         return ResponseEntity.ok(userInfo);
-
 
     }
 }
